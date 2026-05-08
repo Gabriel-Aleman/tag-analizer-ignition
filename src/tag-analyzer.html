@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Tag Analyzer</title>
+  <link rel="stylesheet" href="./style-sheet.css">
+</head>
+
+<body>
+  <div class="container">
+
+    <header>
+      <h1>Tag Analyzer</h1>
+      <span>Ignition JSON · Tag Inspector</span>
+    </header>
+
+    <!-- UPLOAD PANEL -->
+    <div class="panel active" id="panel-upload">
+      <div class="input-card">
+        <div class="input-label">Archivo JSON</div>
+        <div class="drop-zone" id="dropZone">
+          <input type="file" accept=".json" id="fileInput" onchange="handleFile(this.files[0])">
+          <span class="drop-icon">📄</span>
+          <p><strong>Arrastrá tu archivo</strong> o hacé click para seleccionar<br>
+            <small>Solo archivos .json</small>
+          </p>
+        </div>
+        <div id="uploadedFileName"></div>
+      </div>
+      <button class="btn btn-primary" onclick="processData()">Analizar →</button>
+    </div>
+
+    <!-- PATH PANEL -->
+    <div class="panel" id="panel-path">
+      <div class="input-card">
+        <div class="input-label">Ruta del archivo</div>
+        <div class="path-row">
+          <input type="text" id="pathInput" placeholder="testCase/tags.json" value="testCase/tags.json">
+          <button class="btn btn-secondary" onclick="loadFromPath()">Cargar</button>
+        </div>
+        <div id="pathError"></div>
+        <div id="pathPreview"></div>
+      </div>
+      <button class="btn btn-primary" onclick="processData()">Analizar →</button>
+      <p style="margin-top:.75rem;font-size:0.7rem;color:var(--muted);">
+        ⚠ La lectura de archivos del sistema solo funciona en entornos Node.js. En el browser, usá la opción de subir
+        archivo.
+      </p>
+    </div>
+
+    <!-- ERROR -->
+    <div id="errorMsg" style="display:none;margin-top:1rem;"></div>
+
+    <!-- RESULTS -->
+    <div id="results" style="display:none;" class="results-section">
+      <div class="stats-bar" id="statsBar"></div>
+
+      <!-- RESULT VIEW TABS -->
+      <div class="view-tabs" id="viewTabs">
+        <button class="view-tab active" onclick="switchView('tags', this)">🏷 Tags</button>
+        <button class="view-tab" onclick="switchView('opc', this)">⚙ OPC / CSV</button>
+      </div>
+
+      <!-- TAG VIEW -->
+      <div id="view-tags">
+        <div class="filter-row" id="filterRow">
+          <span class="filter-label">valueSource:</span>
+        </div>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>#</th>
+                <th>Full Path</th>
+                <th>Value Source</th>
+                <th>Data Type</th>
+                <th>Nombre</th>
+              </tr>
+            </thead>
+            <tbody id="tagTableBody"></tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- OPC VIEW -->
+      <div id="view-opc" style="display:none;">
+        <div class="opc-toolbar">
+          <div class="device-tabs" id="deviceTabs"></div>
+          <button class="btn btn-accent" onclick="downloadCurrentCSV()">⬇ Descargar CSV</button>
+          <button class="btn btn-secondary" onclick="downloadAllCSV()">⬇ Todos los CSV</button>
+        </div>
+        <div class="opc-hint">Editá <span class="hl">Type</span> y sus parámetros antes de descargar</div>
+        <div class="table-wrap">
+          <table id="opcTable">
+            <thead>
+              <tr>
+                <th style="width:80px">Interval</th>
+                <th>Browse Path</th>
+                <th style="width:260px">Value Source</th>
+                <th style="width:90px">Data Type</th>
+              </tr>
+            </thead>
+            <tbody id="opcTableBody"></tbody>
+          </table>
+        </div>
+      </div>
+
+    </div>
+
+  </div>
+
+  <script src="main.js"></script>
+</body>
+
+</html>

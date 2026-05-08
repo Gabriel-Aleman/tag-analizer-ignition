@@ -63,11 +63,21 @@ function getOPCData(allTags) {
 
     if (!(ctrl in Devices)) Devices[ctrl] = [];
 
+    const dtype = translateDtype(item.dataType);
+    let defaultVS;
+    if (dtype === "boolean") {
+      defaultVS = { tp: "random", min: 0, max: 1, repeat: 0 };
+    } else if (dtype === "string") {
+      defaultVS = { tp: "random", min: 0, max: 100, repeat: 0 };
+    } else {
+      defaultVS = { tp: "ramp", min: 0, max: 100, period: 100, repeat: 0 };
+    }
+
     Devices[ctrl].push({
       timeInterval: 0,
-      vs: { tp: "ramp", min: 0, max: 100, period: 100, repeat: 0 },
+      vs: defaultVS,
       browsePath: opcTag,
-      dataType: translateDtype(item.dataType)
+      dataType: dtype
     });
   }
 
@@ -328,13 +338,22 @@ function renderOPCTable() {
     <tr>
       <td style="color:var(--muted)">${item.timeInterval}</td>
       <td class="path-cell" style="font-size:0.75rem">${escapeHtml(item.browsePath)}</td>
-      <td>${buildVSEditor(idx, item.vs)}</td>
+      <td>${buildVSEditor(idx, item.vs, item.dataType)}</td>
       <td><span class="dtype-badge">${escapeHtml(item.dataType)}</span></td>
     </tr>
   `).join('');
 }
 
-function buildVSEditor(idx, vs) {
+function buildVSEditor(idx, vs, dataType) {
+  // boolean and string use a fixed default — no customization allowed
+  if (dataType === 'boolean' || dataType === 'string') {
+    const preview = formatVS(vs);
+    return `<div class="vs-row">
+              <span class="vs-fixed-badge">default</span>
+            </div>
+            <div class="vs-preview">${escapeHtml(preview)}</div>`;
+  }
+
   const isRamp = vs.tp === 'ramp';
 
   const selectHtml = `

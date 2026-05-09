@@ -330,6 +330,21 @@ input[type="text"]::placeholder { color: var(--muted); }
 
 .vs-select:focus { border-color: var(--accent); }
 
+.vs-fixed-badge {
+  display: inline-block;
+  padding: 3px 10px;
+  border-radius: 4px;
+  font-size: 0.7rem;
+  font-weight: 600;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  background: color-mix(in srgb, var(--muted) 20%, transparent);
+  color: var(--muted);
+  border: 1px solid color-mix(in srgb, var(--muted) 30%, transparent);
+  cursor: default;
+  user-select: none;
+}
+
 .vs-params {
   display: flex;
   gap: 0.3rem;

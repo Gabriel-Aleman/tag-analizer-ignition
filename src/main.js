@@ -66,9 +66,9 @@ function getOPCData(allTags) {
     const dtype = translateDtype(item.dataType);
     let defaultVS;
     if (dtype === "boolean") {
-      defaultVS = { tp: "random", min: 0, max: 1, repeat: 0 };
+      defaultVS = { tp: "fixed", value: 0 };
     } else if (dtype === "string") {
-      defaultVS = { tp: "random", min: 0, max: 100, repeat: 0 };
+      defaultVS = { tp: "fixed", value: "Hola mundo" };
     } else {
       defaultVS = { tp: "ramp", min: 0, max: 100, period: 100, repeat: 0 };
     }
@@ -347,11 +347,10 @@ function renderOPCTable() {
 function buildVSEditor(idx, vs, dataType) {
   // boolean and string use a fixed default — no customization allowed
   if (dataType === 'boolean' || dataType === 'string') {
-    const preview = formatVS(vs);
+    const label = String(vs.value);
     return `<div class="vs-row">
-              <span class="vs-fixed-badge">default</span>
-            </div>
-            <div class="vs-preview">${escapeHtml(preview)}</div>`;
+              <span class="vs-fixed-badge">${escapeHtml(label)}</span>
+            </div>`;
   }
 
   const isRamp = vs.tp === 'ramp';
@@ -404,6 +403,7 @@ function updateVSParam(idx, key, val) {
 }
 
 function formatVS(vs) {
+  if (vs.tp === 'fixed') return String(vs.value);
   if (vs.tp === 'ramp') return `ramp(${vs.min}, ${vs.max}, ${vs.period}, ${vs.repeat})`;
   if (vs.tp === 'random') return `random(${vs.min}, ${vs.max}, ${vs.repeat})`;
   return vs.tp;
